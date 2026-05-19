@@ -408,11 +408,11 @@ function renderMap(){
 
   data.forEach(d=>{
     const val=mval(d);
+    if(val===0) return; // Không hiện bubble nếu không có dữ liệu
     const r=getBubbleR(val,mx);
     const isSel=selectedRegion===d.region;
     const hasSel=!!selectedRegion;
-    const baseOpacity=val>0?0.65:0.2;
-    const opacity=hasSel?(isSel?0.88:0.18):baseOpacity;
+    const opacity=hasSel?(isSel?0.88:0.18):0.65;
 
     const circle=L.circleMarker([d.lat,d.lng],{
       radius:r,fillColor:mc.color,color:mc.color,
