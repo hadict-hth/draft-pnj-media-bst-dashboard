@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PNJ Kim Bảo Ngũ Hành — Paid Media Impact Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f4f8;
+    color: #1a2340;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #1a2340 0%, #2d3f6e 100%);
+    color: white;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .header-logo {
+    width: 42px; height: 42px;
+    background: #c9a84c;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 18px; color: #1a2340;
+    flex-shrink: 0;
+  }
+  .header-title { flex: 1; }
+  .header-title h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.3px; }
+  .header-title p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .header-badge {
+    background: rgba(201,168,76,0.2);
+    border: 1px solid rgba(201,168,76,0.5);
+    color: #c9a84c;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* KPI CARDS */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 20px 24px 0;
+  }
+  .kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+  .kpi-card.active { border-color: #2d6ef6; }
+  .kpi-card::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    opacity: 0.08;
+    transform: translate(20px, -20px);
+  }
+  .kpi-card.c1::before { background: #4f8ef7; }
+  .kpi-card.c2::before { background: #22c55e; }
+  .kpi-card.c3::before { background: #f59e0b; }
+  .kpi-card.c4::before { background: #8b5cf6; }
+  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #6b7280; }
+  .kpi-value { font-size: 32px; font-weight: 800; margin: 6px 0 4px; line-height: 1; }
+  .kpi-card.c1 .kpi-value { color: #2d6ef6; }
+  .kpi-card.c2 .kpi-value { color: #16a34a; }
+  .kpi-card.c3 .kpi-value { color: #d97706; }
+  .kpi-card.c4 .kpi-value { color: #7c3aed; }
+  .kpi-sub { font-size: 11px; color: #9ca3af; }
+
+  /* MAIN LAYOUT */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    padding: 16px 24px;
+  }
+
+  /* MAP PANEL */
+  .map-panel {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-title { font-size: 14px; font-weight: 700; color: #1a2340; }
+  .metric-tabs {
+    display: flex;
+    gap: 4px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .metric-tab {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+  }
+  .metric-tab.active {
+    background: white;
+    color: #2d6ef6;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  #map { height: 480px; width: 100%; }
+
+  .map-legend {
+    padding: 10px 16px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    color: #6b7280;
+  }
+  .legend-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .bubble-dot {
+    background: rgba(45,110,246,0.5);
+    border: 2px solid #2d6ef6;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* RIGHT PANEL */
+  .right-panel { display: flex; flex-direction: column; gap: 16px; }
+
+  .top10-panel {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    overflow: hidden;
+    flex: 1;
+  }
+  .top10-list { padding: 8px 0; max-height: 420px; overflow-y: auto; }
+  .top10-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .top10-item:hover { background: #f8fafc; }
+  .top10-item.highlight { background: #eff6ff; border-left-color: #2d6ef6; }
+  .top10-rank {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: #fef3c7; color: #d97706; }
+  .rank-2 { background: #e5e7eb; color: #4b5563; }
+  .rank-3 { background: #fee2e2; color: #b45309; }
+  .rank-other { background: #f1f5f9; color: #64748b; }
+  .top10-name { flex: 1; font-size: 12px; font-weight: 600; color: #1a2340; }
+  .top10-bar-wrap { width: 80px; }
+  .top10-bar-bg { height: 5px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
+  .top10-bar-fill { height: 5px; background: linear-gradient(90deg, #2d6ef6, #7bb3fc); border-radius: 3px; transition: width 0.4s; }
+  .top10-val { font-size: 11px; font-weight: 700; color: #2d6ef6; min-width: 45px; text-align: right; }
+
+  /* TABLE PANEL */
+  .table-panel {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    overflow: hidden;
+    margin: 0 24px 24px;
+  }
+  .table-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .search-box {
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 12px;
+    outline: none;
+    width: 200px;
+    transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: #2d6ef6; }
+  .btn-csv {
+    padding: 7px 16px;
+    background: #1a2340;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-csv:hover { background: #2d3f6e; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: #f8fafc; }
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #6b7280;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+  th:hover { color: #2d6ef6; }
+  th .sort-icon { margin-left: 4px; opacity: 0.4; }
+  th.sorted .sort-icon { opacity: 1; color: #2d6ef6; }
+  td {
+    padding: 10px 16px;
+    font-size: 12px;
+    border-bottom: 1px solid #f8fafc;
+    color: #374151;
+  }
+  tr:hover td { background: #f8fafc; }
+  .td-region { font-weight: 600; color: #1a2340; }
+  .td-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .td-cr { text-align: right; }
+  .cr-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #dcfce7;
+    color: #15803d;
+  }
+  .khm-val { color: #7c3aed; font-weight: 700; }
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btn {
+    padding: 5px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #374151;
+  }
+  .page-btn:hover { background: #f1f5f9; }
+  .page-btn.active { background: #2d6ef6; border-color: #2d6ef6; color: white; }
+  .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Leaflet tooltip custom */
+  .leaflet-tooltip-custom {
+    background: #1a2340;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .leaflet-tooltip-custom::before { display: none; }
+  .tt-region { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #c9a84c; }
+  .tt-row { display: flex; justify-content: space-between; gap: 20px; font-size: 11px; margin: 2px 0; }
+  .tt-label { color: #9ca3af; }
+  .tt-val { font-weight: 600; color: white; }
+
+  .reset-btn {
+    padding: 5px 14px;
+    background: #f1f5f9;
+    color: #374151;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { background: #e2e8f0; }
+
+  /* TABLE SCROLL WRAPPER */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ════════════════════════════════════════
+     RESPONSIVE — TABLET (≤ 900px)
+  ════════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
+    .top10-list { max-height: 320px; }
+  }
+
+  /* ════════════════════════════════════════
+     RESPONSIVE — MOBILE (≤ 640px)
+  ════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    /* Header */
+    .header { padding: 12px 16px; gap: 10px; }
+    .header-logo { width: 34px; height: 34px; font-size: 14px; }
+    .header-title h1 { font-size: 13px; }
+    .header-title p { font-size: 10px; }
+    .header-badge { display: none; }
+
+    /* KPI – 2 columns */
+    .kpi-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px 12px 0;
+    }
+    .kpi-card { padding: 12px 14px; }
+    .kpi-value { font-size: 24px; }
+    .kpi-label { font-size: 9px; }
+    .kpi-sub { font-size: 10px; }
+
+    /* Main grid */
+    .main-grid { gap: 10px; padding: 10px 12px; }
+
+    /* Map panel header – stack vertically */
+    .map-panel .panel-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+    .map-panel .panel-header > div {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .metric-tabs {
+      flex: 1;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .metric-tabs::-webkit-scrollbar { display: none; }
+    .metric-tab { padding: 5px 10px; white-space: nowrap; font-size: 10px; }
+
+    /* Map height */
+    #map { height: 320px; }
+
+    /* Map legend – compact */
+    .map-legend {
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+      font-size: 10px;
+    }
+    .map-legend span[style*="margin-left:auto"] { margin-left: 0; width: 100%; }
+
+    /* Top10 – hide progress bar on very small screens */
+    .top10-bar-wrap { display: none; }
+    .top10-item { padding: 8px 12px; }
+    .top10-list { max-height: 280px; }
+
+    /* Table panel */
+    .table-panel { margin: 0 12px 16px; }
+    .table-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+    .table-header > div { width: 100%; justify-content: space-between; }
+    .search-box { flex: 1; width: auto; min-width: 0; }
+    th { padding: 8px 10px; font-size: 10px; }
+    td { padding: 8px 10px; font-size: 11px; }
+
+    /* Pagination */
+    .pagination { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 12px; }
+    .page-btn { padding: 5px 8px; font-size: 11px; }
+  }
+
+  /* ════════════════════════════════════════
+     RESPONSIVE — SMALL MOBILE (≤ 400px)
+  ════════════════════════════════════════ */
+  @media (max-width: 400px) {
+    .kpi-row { grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 10px 0; }
+    .kpi-value { font-size: 20px; }
+    #map { height: 280px; }
+    .main-grid { padding: 10px; }
+    .table-panel { margin: 0 10px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">PNJ</div>
+  <div class="header-title">
+    <h1>Kim Bảo Ngũ Hành — Paid Media Impact Dashboard</h1>
+    <p>Phân tích hiệu quả truyền thông theo tỉnh/thành phố · BST 2024</p>
+  </div>
+  <div class="header-badge">MEDIA REPORT</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card c1 active" id="kpi-impressions" onclick="setMetric('impressions')">
+    <div class="kpi-label">Total Impressions</div>
+    <div class="kpi-value" id="v-impressions">0</div>
+    <div class="kpi-sub">Tổng theo toàn quốc</div>
+  </div>
+  <div class="kpi-card c2" id="kpi-clicks" onclick="setMetric('clicks')">
+    <div class="kpi-label">Total Clicks</div>
+    <div class="kpi-value" id="v-clicks">0</div>
+    <div class="kpi-sub">Tổng theo toàn quốc</div>
+  </div>
+  <div class="kpi-card c3" id="kpi-khm" onclick="setMetric('khm')">
+    <div class="kpi-label">KH Phát Sinh</div>
+    <div class="kpi-value" id="v-khm">0</div>
+    <div class="kpi-sub">Ước tính, CR × Clicks</div>
+  </div>
+  <div class="kpi-card c4">
+    <div class="kpi-label">Tỉnh / Thành Phố</div>
+    <div class="kpi-value" id="v-provinces">0</div>
+    <div class="kpi-sub">Có dữ liệu impression</div>
+  </div>
+</div>
+
+<div class="main-grid">
+  <!-- MAP -->
+  <div class="map-panel">
+    <div class="panel-header">
+      <span class="panel-title">Bản đồ Việt Nam — Phân bố impact theo tỉnh/thành</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="reset-btn" onclick="resetFilter()">Reset filter</button>
+        <div class="metric-tabs">
+          <button class="metric-tab active" id="tab-impressions" onclick="setMetric('impressions')">Total Impressions</button>
+          <button class="metric-tab" id="tab-clicks" onclick="setMetric('clicks')">Total Clicks</button>
+          <button class="metric-tab" id="tab-khm" onclick="setMetric('khm')">KH Phát sinh</button>
+        </div>
+      </div>
+    </div>
+    <div id="map"></div>
+    <div class="map-legend">
+      <span class="legend-bubble"><span class="bubble-dot" style="width:8px;height:8px;"></span> Nhỏ</span>
+      <span class="legend-bubble"><span class="bubble-dot" style="width:16px;height:16px;"></span> Vừa</span>
+      <span class="legend-bubble"><span class="bubble-dot" style="width:26px;height:26px;"></span> Lớn</span>
+      <span style="margin-left:4px;">Bubble lớn hơn = metric đang chọn lớn hơn</span>
+      <span style="margin-left:auto;">Metric trên map: <strong id="legend-metric-name">Total Impressions</strong></span>
+    </div>
+  </div>
+
+  <!-- RIGHT: TOP 10 -->
+  <div class="right-panel">
+    <div class="top10-panel">
+      <div class="panel-header">
+        <span class="panel-title">Top 10 tỉnh/thành</span>
+        <span style="font-size:11px;color:#9ca3af;" id="top10-metric-label">Theo Total Impressions</span>
+      </div>
+      <div class="top10-list" id="top10-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-panel">
+  <div class="table-header">
+    <span class="panel-title">Bảng detail theo tỉnh/thành phố</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input type="text" class="search-box" id="search-input" placeholder="Tìm tỉnh/thành..." oninput="filterTable()">
+      <button class="btn-csv" onclick="downloadCSV()">⬇ Download CSV</button>
+    </div>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sortTable('region')">#&nbsp; Tỉnh / Thành Phố <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable('impressions')" style="text-align:right">Total Impressions <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable('clicks')" style="text-align:right">Total Clicks <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable('cr')" style="text-align:right">CR <span class="sort-icon">↕</span></th>
+        <th onclick="sortTable('khm')" style="text-align:right">KH Phát Sinh <span class="sort-icon">↕</span></th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+  </div>
+  <div class="pagination">
+    <span id="pagination-info"></span>
+    <div class="page-btns" id="page-btns"></div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// DATA (cleaned from xlsx)
+// ──────────────────────────────────────────────
+const RAW = [
+  ["TP. Hồ Chí Minh",10.7769,106.7009,58621,1452,0.09,131],
+  ["Hà Nội",21.0285,105.8542,28643,685,0.09,62],
+  ["Bình Dương",10.9804,106.6519,4683,102,0.13,13],
+  ["Đà Nẵng",16.0544,108.2022,5560,96,0.08,8],
+  ["Cần Thơ",10.0452,105.7469,3201,68,0.10,7],
+  ["Hải Phòng",20.8449,106.6881,2685,59,0.12,7],
+  ["Đồng Nai",10.9453,106.824,3312,54,0.09,5],
+  ["Thừa Thiên Huế",16.4637,107.5909,1833,37,0.08,3],
+  ["Đắk Lắk",12.71,108.2378,1565,36,0.09,3],
+  ["Khánh Hòa",12.2388,109.1967,1744,33,0.12,4],
+  ["Nghệ An",18.6796,105.6813,1179,27,0.14,4],
+  ["Lâm Đồng",11.5753,108.1429,1009,26,0.14,4],
+  ["Bà Rịa - Vũng Tàu",10.5417,107.243,1589,23,0.14,3],
+  ["Bắc Ninh",21.1861,106.0763,1158,21,0.08,2],
+  ["Long An",10.6956,106.2431,1150,17,0.13,2],
+  ["Thanh Hóa",19.8074,105.7766,996,17,0.13,2],
+  ["Bình Thuận",10.9333,108.1,766,15,0.11,2],
+  ["Thái Bình",20.4463,106.3366,470,15,0.10,2],
+  ["Ninh Thuận",11.6739,108.8629,365,11,0.11,1],
+  ["Kon Tum",14.3545,108.0076,370,10,0.09,1],
+  ["Ninh Bình",20.2506,105.9745,513,9,0.08,1],
+  ["Quảng Bình",17.4689,106.6223,470,9,0.11,1],
+  ["Quảng Trị",16.7943,107.1878,235,6,0.09,1],
+  ["Quảng Nam",15.5394,108.0191,1132,5,0.10,0],
+  ["Hải Dương",20.9373,106.3145,55,4,0.13,1],
+  ["Đồng Tháp",10.4938,105.6882,528,3,0.09,0],
+  ["Hậu Giang",9.7845,105.4701,187,3,0.14,0],
+  ["Tây Ninh",11.335,106.1099,17,2,0.14,0],
+  ["Bình Định",13.782,109.2196,13,2,0.14,0],
+  ["Hà Nam",20.5835,105.923,313,1,0.11,0],
+  ["Vĩnh Long",10.2396,105.9572,108,1,0.08,0],
+  ["Quảng Ninh",21.0064,107.2925,56,1,0.11,0],
+  ["Kiên Giang",10.0125,105.0809,20,1,0.14,0],
+  ["Nam Định",20.4388,106.1621,18,1,0.13,0],
+  ["Hưng Yên",20.6464,106.0511,7,1,0.14,0],
+  ["An Giang",10.5216,105.1259,20,0,0.08,0],
+  ["Quảng Ngãi",15.1214,108.8044,19,0,0.08,0],
+  ["Tiền Giang",10.4493,106.3421,15,0,0.11,0],
+  ["Cà Mau",9.1527,105.1961,14,0,0.13,0],
+  ["Bến Tre",10.2433,106.3756,10,0,0.14,0],
+  ["Bình Phước",11.7512,106.7235,9,0,0.14,0],
+  ["Vĩnh Phúc",21.3089,105.6049,9,0,0.08,0],
+  ["Bạc Liêu",9.294,105.7244,8,0,0.10,0],
+  ["Gia Lai",13.9833,108.0,8,0,0.10,0],
+  ["Phú Thọ",21.2684,105.2046,6,0,0.14,0],
+  ["Thái Nguyên",21.5942,105.8482,6,0,0.12,0],
+  ["Sóc Trăng",9.6036,105.98,5,0,0.08,0],
+  ["Trà Vinh",9.8127,106.2993,5,0,0.13,0],
+  ["Bắc Giang",21.2731,106.1946,3,0,0.13,0],
+  ["Hà Giang",22.7662,104.9389,3,0,0.10,0],
+  ["Phú Yên",13.0882,109.0929,3,0,0.11,0],
+  ["Hòa Bình",20.8172,105.3376,2,0,0.08,0],
+  ["Lào Cai",22.4809,103.9755,2,0,0.13,0],
+  ["Yên Bái",21.7229,104.9113,2,0,0.08,0],
+  ["Đắk Nông",12.2646,107.6098,2,0,0.10,0],
+  ["Cao Bằng",22.6666,106.2639,1,0,0.09,0],
+  ["Hà Tĩnh",18.3559,105.8877,1,0,0.14,0],
+  ["Lạng Sơn",21.8526,106.7615,1,0,0.09,0],
+  ["Điện Biên",21.386,103.0169,1,0,0.10,0],
+];
+
+const data = RAW.map(r => ({
+  region: r[0], lat: r[1], lng: r[2],
+  impressions: r[3], clicks: r[4], cr: r[5], khm: r[6]
+}));
+
+// ──────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────
+let currentMetric = 'impressions';
+let sortCol = 'impressions';
+let sortDir = -1;
+let currentPage = 1;
+const PAGE_SIZE = 15;
+let filteredData = [...data];
+let selectedRegion = null;
+
+const metricConfig = {
+  impressions: { label: 'Total Impressions', color: '#2d6ef6', short: 'Impressions' },
+  clicks:      { label: 'Total Clicks',      color: '#16a34a', short: 'Clicks' },
+  khm:         { label: 'KH Phát sinh',      color: '#d97706', short: 'KH Phát sinh' },
+};
+
+// ──────────────────────────────────────────────
+// MAP INIT
+// ──────────────────────────────────────────────
+const isMobile = window.innerWidth <= 640;
+const map = L.map('map', {
+  center: isMobile ? [16.5, 107.5] : [16.2, 107.8],
+  zoom: isMobile ? 5 : 6,
+  zoomControl: !isMobile,
+  attributionControl: false,
+  tap: true,
+});
+if (isMobile) {
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+}
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors',
+  opacity: 0.5,
+}).addTo(map);
+
+// Custom attribution
+L.control.attribution({ position: 'bottomright' }).addTo(map);
+
+let markers = [];
+let activeCircle = null;
+
+function getMetricVal(d, metric) {
+  if (metric === 'impressions') return d.impressions;
+  if (metric === 'clicks') return d.clicks;
+  return d.khm;
+}
+
+function getBubbleRadius(val, maxVal) {
+  if (maxVal === 0) return 4;
+  const minR = isMobile ? 4 : 5;
+  const maxR = isMobile ? 26 : 42;
+  return minR + (Math.sqrt(val / maxVal)) * (maxR - minR);
+}
+
+function renderMap() {
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+
+  const mc = metricConfig[currentMetric];
+  const maxVal = Math.max(...data.map(d => getMetricVal(d, currentMetric)));
+
+  data.forEach(d => {
+    const val = getMetricVal(d, currentMetric);
+    const r = getBubbleRadius(val, maxVal);
+    const isSelected = selectedRegion === d.region;
+    const opacity = selectedRegion ? (isSelected ? 0.85 : 0.25) : 0.65;
+
+    const circle = L.circleMarker([d.lat, d.lng], {
+      radius: r,
+      fillColor: mc.color,
+      color: mc.color,
+      weight: isSelected ? 2.5 : 1.5,
+      opacity: 1,
+      fillOpacity: opacity,
+    });
+
+    const tooltipHtml = `
+      <div class="tt-region">${d.region}</div>
+      <div class="tt-row"><span class="tt-label">Impressions</span><span class="tt-val">${fmt(d.impressions)}</span></div>
+      <div class="tt-row"><span class="tt-label">Clicks</span><span class="tt-val">${fmt(d.clicks)}</span></div>
+      <div class="tt-row"><span class="tt-label">CR</span><span class="tt-val">${(d.cr*100).toFixed(0)}%</span></div>
+      <div class="tt-row"><span class="tt-label">KH Phát sinh</span><span class="tt-val">${d.khm}</span></div>
+    `;
+
+    circle.bindTooltip(tooltipHtml, {
+      className: 'leaflet-tooltip-custom',
+      permanent: false,
+      direction: 'top',
+      offset: [0, -r],
+    });
+
+    circle.on('click', () => {
+      if (selectedRegion === d.region) {
+        selectedRegion = null;
+      } else {
+        selectedRegion = d.region;
+        highlightTop10(d.region);
+      }
+      renderMap();
+      filterTable();
+    });
+
+    circle.addTo(map);
+    markers.push(circle);
+  });
+}
+
+// ──────────────────────────────────────────────
+// KPI CARDS
+// ──────────────────────────────────────────────
+function updateKPIs() {
+  const total = arr => arr.reduce((a, b) => a + b, 0);
+  document.getElementById('v-impressions').textContent = fmtK(total(data.map(d => d.impressions)));
+  document.getElementById('v-clicks').textContent = fmtK(total(data.map(d => d.clicks)));
+  document.getElementById('v-khm').textContent = fmtK(total(data.map(d => d.khm)));
+  document.getElementById('v-provinces').textContent = data.filter(d => d.impressions > 0).length;
+}
+
+function fmt(n) {
+  return n === undefined ? '—' : n.toLocaleString('vi-VN');
+}
+function fmtK(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(2).replace('.00','') + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1).replace('.0','') + 'K';
+  return n.toLocaleString('vi-VN');
+}
+
+// ──────────────────────────────────────────────
+// TOP 10
+// ──────────────────────────────────────────────
+function renderTop10() {
+  const mc = metricConfig[currentMetric];
+  document.getElementById('top10-metric-label').textContent = 'Theo ' + mc.label;
+  document.getElementById('legend-metric-name').textContent = mc.label;
+
+  const sorted = [...data].sort((a, b) => getMetricVal(b, currentMetric) - getMetricVal(a, currentMetric)).slice(0, 10);
+  const maxVal = getMetricVal(sorted[0], currentMetric);
+  const container = document.getElementById('top10-list');
+  container.innerHTML = '';
+
+  sorted.forEach((d, i) => {
+    const val = getMetricVal(d, currentMetric);
+    const pct = maxVal > 0 ? (val / maxVal * 100) : 0;
+    const rankClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+    const isHighlight = selectedRegion === d.region;
+    const item = document.createElement('div');
+    item.className = `top10-item${isHighlight ? ' highlight' : ''}`;
+    item.innerHTML = `
+      <div class="top10-rank ${rankClass}">${i+1}</div>
+      <div class="top10-name">${d.region}</div>
+      <div class="top10-bar-wrap">
+        <div class="top10-bar-bg"><div class="top10-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${mc.color},${mc.color}88)"></div></div>
+      </div>
+      <div class="top10-val" style="color:${mc.color}">${fmt(val)}</div>
+    `;
+    item.onclick = () => {
+      selectedRegion = selectedRegion === d.region ? null : d.region;
+      renderMap();
+      renderTop10();
+      filterTable();
+    };
+    container.appendChild(item);
+  });
+}
+
+function highlightTop10(region) {
+  renderTop10();
+}
+
+// ──────────────────────────────────────────────
+// TABLE
+// ──────────────────────────────────────────────
+function filterTable() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  filteredData = data.filter(d => d.region.toLowerCase().includes(q));
+  currentPage = 1;
+  renderTable();
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir = -sortDir;
+  else { sortCol = col; sortDir = -1; }
+  renderTable();
+  document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
+  const idx = ['region','impressions','clicks','cr','khm'].indexOf(col);
+  if (idx >= 0) document.querySelectorAll('th')[idx].classList.add('sorted');
+}
+
+function renderTable() {
+  const sorted = [...filteredData].sort((a, b) => {
+    let av = a[sortCol === 'region' ? 'region' : sortCol];
+    let bv = b[sortCol === 'region' ? 'region' : sortCol];
+    if (typeof av === 'string') return sortDir * av.localeCompare(bv, 'vi');
+    return sortDir * (av - bv);
+  });
+
+  const total = sorted.length;
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  currentPage = Math.min(currentPage, pages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageData = sorted.slice(start, start + PAGE_SIZE);
+
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = '';
+  pageData.forEach((d, i) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><span style="color:#9ca3af;font-size:11px;margin-right:8px;">${start+i+1}</span><span class="td-region">${d.region}</span></td>
+      <td class="td-num">${fmt(d.impressions)}</td>
+      <td class="td-num">${fmt(d.clicks)}</td>
+      <td class="td-cr"><span class="cr-badge">${(d.cr*100).toFixed(0)}%</span></td>
+      <td class="td-num khm-val">${d.khm}</td>
+    `;
+    row.style.cursor = 'pointer';
+    row.onclick = () => {
+      selectedRegion = selectedRegion === d.region ? null : d.region;
+      map.setView([d.lat, d.lng], 8, {animate: true});
+      renderMap();
+      renderTop10();
+      renderTable();
+    };
+    if (selectedRegion === d.region) {
+      row.style.background = '#eff6ff';
+      row.style.fontWeight = '600';
+    }
+    tbody.appendChild(row);
+  });
+
+  document.getElementById('pagination-info').textContent = `Hiển thị ${start+1}–${Math.min(start+PAGE_SIZE, total)} / ${total} tỉnh thành`;
+
+  const pageBtns = document.getElementById('page-btns');
+  pageBtns.innerHTML = '';
+  const addBtn = (label, pg, disabled=false, active=false) => {
+    const b = document.createElement('button');
+    b.className = `page-btn${active?' active':''}`;
+    b.textContent = label;
+    b.disabled = disabled;
+    b.onclick = () => { currentPage = pg; renderTable(); };
+    pageBtns.appendChild(b);
+  };
+  addBtn('←', currentPage-1, currentPage===1);
+  const showPages = getPageRange(currentPage, pages);
+  showPages.forEach(pg => {
+    if (pg === '...') { const s = document.createElement('span'); s.textContent='…'; s.style='padding:0 4px;color:#9ca3af'; pageBtns.appendChild(s); }
+    else addBtn(pg, pg, false, pg===currentPage);
+  });
+  addBtn('→', currentPage+1, currentPage===pages);
+}
+
+function getPageRange(cur, total) {
+  if (total <= 7) return Array.from({length:total},(_,i)=>i+1);
+  const pages = [1];
+  if (cur > 3) pages.push('...');
+  for (let p = Math.max(2, cur-1); p <= Math.min(total-1, cur+1); p++) pages.push(p);
+  if (cur < total-2) pages.push('...');
+  pages.push(total);
+  return pages;
+}
+
+// ──────────────────────────────────────────────
+// METRIC SWITCH
+// ──────────────────────────────────────────────
+function setMetric(metric) {
+  currentMetric = metric;
+  document.querySelectorAll('.metric-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+metric).classList.add('active');
+  document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('kpi-'+metric)?.classList.add('active');
+  renderMap();
+  renderTop10();
+}
+
+// ──────────────────────────────────────────────
+// RESET
+// ──────────────────────────────────────────────
+function resetFilter() {
+  selectedRegion = null;
+  document.getElementById('search-input').value = '';
+  filteredData = [...data];
+  currentPage = 1;
+  map.setView([16.2, 107.8], 6, {animate: true});
+  renderMap();
+  renderTop10();
+  renderTable();
+}
+
+// ──────────────────────────────────────────────
+// CSV DOWNLOAD
+// ──────────────────────────────────────────────
+function downloadCSV() {
+  const header = ['Tỉnh/Thành Phố','Total Impressions','Total Clicks','CR','KH Phát Sinh'];
+  const rows = filteredData.map(d => [d.region, d.impressions, d.clicks, (d.cr*100).toFixed(0)+'%', d.khm]);
+  const csv = [header, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='pnj_media_data.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ──────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────
+updateKPIs();
+renderMap();
+renderTop10();
+filteredData = [...data];
+sortTable('impressions');
+</script>
+</body>
+</html>
