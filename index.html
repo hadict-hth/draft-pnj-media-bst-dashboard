@@ -7,148 +7,137 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI',Arial,sans-serif; background:#f0f4f8; color:#1a2340; min-height:100vh; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#1a2340;min-height:100vh;}
 
 /* HEADER */
-.header { background:linear-gradient(135deg,#1a2340,#2d3f6e); color:#fff; padding:16px 28px; display:flex; align-items:center; gap:14px; box-shadow:0 2px 12px rgba(0,0,0,.2); }
-.header-logo { width:40px;height:40px; background:#c9a84c; border-radius:8px; display:flex;align-items:center;justify-content:center; font-weight:900;font-size:16px;color:#1a2340; flex-shrink:0; }
-.header-title { flex:1; }
-.header-title h1 { font-size:17px;font-weight:700;letter-spacing:.3px; }
-.header-title p { font-size:11px;opacity:.65;margin-top:2px; }
-.header-right { display:flex;align-items:center;gap:10px; }
-.date-badge { background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);padding:4px 12px;border-radius:20px;font-size:11px; }
-.header-badge { background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.5);color:#c9a84c;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px; }
+.header{background:linear-gradient(135deg,#1a2340,#2d3f6e);color:#fff;padding:14px 28px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.header-logo{width:40px;height:40px;background:#c9a84c;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#1a2340;flex-shrink:0;}
+.header-title{flex:1;}
+.header-title h1{font-size:17px;font-weight:700;}
+.header-title p{font-size:11px;opacity:.65;margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.date-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85);padding:4px 12px;border-radius:20px;font-size:11px;}
+.header-badge{background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.5);color:#c9a84c;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;}
 
 /* SECTION LABEL */
-.section-label { padding:14px 24px 0; display:flex; align-items:center; gap:8px; }
-.section-label h2 { font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.8px; }
-.section-divider { flex:1;height:1px;background:#e2e8f0; }
+.section-label{padding:14px 24px 0;display:flex;align-items:center;gap:8px;}
+.section-label h2{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;}
+.section-divider{flex:1;height:1px;background:#e2e8f0;}
+.legend-dots{display:flex;align-items:center;gap:10px;margin-left:8px;}
+.ldot{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#9ca3af;}
+.ldot-sq{width:9px;height:9px;border-radius:2px;display:inline-block;}
 
-/* KPI CARDS */
-.kpi-row { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; padding:10px 24px 0; }
-.kpi-card { background:#fff; border-radius:12px; padding:14px 16px; box-shadow:0 1px 6px rgba(0,0,0,.07); position:relative; overflow:hidden; cursor:pointer; transition:all .2s; border:2px solid transparent; }
-.kpi-card:hover { transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.12); }
-.kpi-card.active { border-color:currentColor; }
-.kpi-card::before { content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:50%;opacity:.07;transform:translate(20px,-20px); }
-.kpi-card.c1::before{background:#2d6ef6;} .kpi-card.c2::before{background:#16a34a;} .kpi-card.c3::before{background:#f59e0b;}
-.kpi-card.c4::before{background:#e11d48;} .kpi-card.c5::before{background:#7c3aed;} .kpi-card.c6::before{background:#0891b2;}
-.kpi-label { font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#9ca3af; }
-.kpi-value { font-size:24px;font-weight:800;line-height:1;margin:5px 0 3px; }
-.kpi-card.c1 .kpi-value{color:#2d6ef6;} .kpi-card.c2 .kpi-value{color:#16a34a;} .kpi-card.c3 .kpi-value{color:#d97706;}
-.kpi-card.c4 .kpi-value{color:#e11d48;} .kpi-card.c5 .kpi-value{color:#7c3aed;} .kpi-card.c6 .kpi-value{color:#0891b2;}
-.kpi-sub { font-size:10px;color:#9ca3af; }
-.kpi-tag { display:inline-block;margin-top:4px;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700; }
-.tag-media { background:#dbeafe;color:#1d4ed8; }
-.tag-actual { background:#dcfce7;color:#15803d; }
+/* KPI GRID — 4 cols, 2 rows */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:10px 24px 0;}
+.kpi-card{background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 1px 6px rgba(0,0,0,.07);position:relative;overflow:hidden;cursor:pointer;transition:all .2s;border:2px solid transparent;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.12);}
+.kpi-card.active{border-color:var(--kc);}
+.kpi-card::before{content:'';position:absolute;top:0;right:0;width:65px;height:65px;border-radius:50%;background:var(--kc);opacity:.07;transform:translate(20px,-20px);}
+.kpi-label{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#9ca3af;}
+.kpi-value{font-size:24px;font-weight:800;line-height:1;margin:5px 0 3px;color:var(--kc);}
+.kpi-sub{font-size:10px;color:#9ca3af;}
+.kpi-tag{display:inline-block;margin-top:4px;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700;}
+.tag-media{background:#dbeafe;color:#1d4ed8;} .tag-actual{background:#dcfce7;color:#15803d;}
 
 /* MAIN LAYOUT */
-.main-grid { display:grid; grid-template-columns:1fr 300px; gap:14px; padding:14px 24px; }
+.main-grid{display:grid;grid-template-columns:1fr 300px;gap:14px;padding:14px 24px;}
 
 /* MAP PANEL */
-.map-panel { background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden; }
-.panel-header { padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;flex-direction:column;gap:10px; }
-.panel-header-top { display:flex;align-items:center;justify-content:space-between;gap:8px; }
-.panel-title { font-size:13px;font-weight:700; }
-.panel-header-tabs { display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
-.tab-group { display:flex;align-items:center;gap:5px; }
-.tab-group-label { font-size:9px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:4px;flex-shrink:0; }
-.tab-group-label.lbl-media   { background:#2d6ef6; }
-.tab-group-label.lbl-actual  { background:#16a34a; }
-.metric-tabs { display:flex;gap:3px;background:#f1f5f9;border-radius:8px;padding:3px; }
-.metric-tab { padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:#6b7280;transition:all .15s;white-space:nowrap; }
-.metric-tab.active { background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1); }
-.metric-tab.media-tab.active  { color:#2d6ef6; }
-.metric-tab.actual-tab.active { color:#16a34a; }
-.reset-btn { padding:5px 11px;background:#f1f5f9;color:#374151;border:1px solid #e2e8f0;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0; }
-.reset-btn:hover { background:#e2e8f0; }
-#map { height:460px;width:100%; }
-.map-legend { padding:8px 14px;background:#f8fafc;border-top:1px solid #f1f5f9;display:flex;align-items:center;gap:12px;font-size:10px;color:#6b7280;flex-wrap:wrap; }
-.legend-bubble { display:inline-flex;align-items:center;gap:4px; }
-.bubble-dot { background:rgba(45,110,246,.45);border:2px solid #2d6ef6;border-radius:50%;display:inline-block; }
+.map-panel{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;}
+.panel-header{padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;flex-direction:column;gap:10px;}
+.panel-header-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.panel-title{font-size:13px;font-weight:700;}
+.panel-header-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.tab-group{display:flex;align-items:center;gap:5px;}
+.tab-group-label{font-size:9px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:4px;flex-shrink:0;}
+.lbl-media{background:#2d6ef6;} .lbl-actual{background:#16a34a;}
+.metric-tabs{display:flex;gap:3px;background:#f1f5f9;border-radius:8px;padding:3px;}
+.metric-tab{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:#6b7280;transition:all .15s;white-space:nowrap;}
+.metric-tab.active{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.metric-tab.media-tab.active{color:#2d6ef6;} .metric-tab.actual-tab.active{color:#16a34a;}
+.reset-btn{padding:5px 11px;background:#f1f5f9;color:#374151;border:1px solid #e2e8f0;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0;}
+.reset-btn:hover{background:#e2e8f0;}
+#map{height:460px;width:100%;}
+.map-legend{padding:8px 14px;background:#f8fafc;border-top:1px solid #f1f5f9;display:flex;align-items:center;gap:12px;font-size:10px;color:#6b7280;flex-wrap:wrap;}
+.legend-bubble{display:inline-flex;align-items:center;gap:4px;}
+.bubble-dot{background:rgba(45,110,246,.45);border:2px solid #2d6ef6;border-radius:50%;display:inline-block;}
 
 /* RIGHT PANEL */
-.right-panel { display:flex;flex-direction:column;gap:14px; }
-.top10-panel { background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;flex:1; }
-.top10-list { padding:6px 0;max-height:430px;overflow-y:auto; }
-.top10-item { display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent; }
-.top10-item:hover { background:#f8fafc; }
-.top10-item.highlight { background:#eff6ff;border-left-color:#2d6ef6; }
-.top10-rank { width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0; }
+.right-panel{display:flex;flex-direction:column;gap:14px;}
+.top10-panel{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;flex:1;}
+.top10-list{padding:6px 0;max-height:440px;overflow-y:auto;}
+.top10-item{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;}
+.top10-item:hover{background:#f8fafc;} .top10-item.highlight{background:#eff6ff;border-left-color:#2d6ef6;}
+.top10-rank{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
 .rank-1{background:#fef3c7;color:#d97706;} .rank-2{background:#e5e7eb;color:#4b5563;} .rank-3{background:#fee2e2;color:#b45309;} .rank-o{background:#f1f5f9;color:#64748b;}
-.top10-name { flex:1;font-size:11px;font-weight:600;color:#1a2340; }
-.top10-bar-wrap { width:60px; }
-.top10-bar-bg { height:4px;background:#f1f5f9;border-radius:2px;overflow:hidden; }
-.top10-bar-fill { height:4px;border-radius:2px;transition:width .4s; }
-.top10-val { font-size:10px;font-weight:700;min-width:44px;text-align:right; }
+.top10-name{flex:1;font-size:11px;font-weight:600;color:#1a2340;}
+.top10-bar-wrap{width:60px;}
+.top10-bar-bg{height:4px;background:#f1f5f9;border-radius:2px;overflow:hidden;}
+.top10-bar-fill{height:4px;border-radius:2px;transition:width .4s;}
+.top10-val{font-size:10px;font-weight:700;min-width:44px;text-align:right;}
 
 /* TABLE */
-.table-panel { background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;margin:0 24px 24px; }
-.table-header { padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
-.search-box { padding:6px 11px;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;outline:none;width:180px;transition:border-color .15s; }
-.search-box:focus { border-color:#2d6ef6; }
-.btn-csv { padding:6px 14px;background:#1a2340;color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer; }
-.btn-csv:hover { background:#2d3f6e; }
-.tbl-scroll { overflow-x:auto;-webkit-overflow-scrolling:touch; }
-table { width:100%;border-collapse:collapse; }
-thead { background:#f8fafc; }
-th { padding:9px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#6b7280;white-space:nowrap;border-bottom:2px solid #f1f5f9;user-select:none;cursor:pointer; }
-th:hover { color:#374151; }
-th.sorted { color:#0891b2; }
-th.th-media { background:#eff6ff; }
-th.th-actual { background:#f0fdf4; }
-td { padding:9px 12px;font-size:11px;border-bottom:1px solid #f8fafc;color:#374151; }
-tr:hover td { background:#fafafa; }
-.td-region { font-weight:600;color:#1a2340; }
-.td-num { text-align:right;font-variant-numeric:tabular-nums; }
-.td-cr { text-align:right; }
-.cr-badge { display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600;background:#dcfce7;color:#15803d; }
-.td-revenue { text-align:right;color:#e11d48;font-weight:700; }
-.td-orders { text-align:right;color:#7c3aed;font-weight:600; }
-.td-kh-actual { text-align:right;color:#0891b2;font-weight:700; }
-.col-divider { border-left:2px dashed #e2e8f0; }
-.pagination { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid #f1f5f9;font-size:11px;color:#6b7280;flex-wrap:wrap;gap:6px; }
-.page-btns { display:flex;gap:3px; }
-.page-btn { padding:4px 9px;border:1px solid #e2e8f0;border-radius:5px;background:#fff;font-size:11px;cursor:pointer;color:#374151; }
-.page-btn:hover { background:#f1f5f9; }
-.page-btn.active { background:#2d6ef6;border-color:#2d6ef6;color:#fff; }
-.page-btn:disabled { opacity:.4;cursor:not-allowed; }
+.table-panel{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:hidden;margin:0 24px 24px;}
+.table-header{padding:12px 16px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.search-box{padding:6px 11px;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;outline:none;width:180px;transition:border-color .15s;}
+.search-box:focus{border-color:#2d6ef6;}
+.btn-csv{padding:6px 14px;background:#1a2340;color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;}
+.btn-csv:hover{background:#2d3f6e;}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;}
+thead{background:#f8fafc;}
+th{padding:9px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#6b7280;white-space:nowrap;border-bottom:2px solid #f1f5f9;user-select:none;cursor:pointer;}
+th:hover{color:#374151;} th.sorted{color:#0891b2;}
+th.th-media{background:#eff6ff;} th.th-actual{background:#f0fdf4;} th.th-khm{background:#fdf4ff;} th.th-khc{background:#fff7ed;}
+td{padding:8px 12px;font-size:11px;border-bottom:1px solid #f8fafc;color:#374151;}
+tr:hover td{background:#fafafa;}
+.td-region{font-weight:600;color:#1a2340;}
+.td-num{text-align:right;font-variant-numeric:tabular-nums;}
+.cr-badge{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:600;background:#dcfce7;color:#15803d;}
+.td-revenue{text-align:right;color:#e11d48;font-weight:700;}
+.td-orders{text-align:right;color:#7c3aed;font-weight:600;}
+.td-kh{text-align:right;color:#0891b2;font-weight:700;}
+.td-khm{text-align:right;color:#9333ea;font-weight:700;}
+.td-khc{text-align:right;color:#ea580c;font-weight:700;}
+.col-divider{border-left:2px dashed #e2e8f0;}
+.na{color:#d1d5db;}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid #f1f5f9;font-size:11px;color:#6b7280;flex-wrap:wrap;gap:6px;}
+.page-btns{display:flex;gap:3px;}
+.page-btn{padding:4px 9px;border:1px solid #e2e8f0;border-radius:5px;background:#fff;font-size:11px;cursor:pointer;color:#374151;}
+.page-btn:hover{background:#f1f5f9;} .page-btn.active{background:#2d6ef6;border-color:#2d6ef6;color:#fff;} .page-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-/* LEAFLET TOOLTIP */
-.leaflet-tooltip-custom { background:#1a2340;color:#fff;border:none;border-radius:9px;padding:10px 14px;font-family:'Segoe UI',Arial,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.25);min-width:180px; }
-.leaflet-tooltip-custom::before { display:none; }
-.tt-region { font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:6px; }
-.tt-section { font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin:6px 0 3px;opacity:.5; }
-.tt-row { display:flex;justify-content:space-between;gap:16px;font-size:11px;margin:2px 0; }
-.tt-label { color:#9ca3af; }
-.tt-val { font-weight:600; }
-.tt-val.red { color:#f87171; }
-.tt-val.purple { color:#c084fc; }
-.tt-val.cyan { color:#67e8f9; }
+/* TOOLTIP */
+.leaflet-tooltip-custom{background:#1a2340;color:#fff;border:none;border-radius:9px;padding:10px 14px;font-family:'Segoe UI',Arial,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.25);min-width:190px;}
+.leaflet-tooltip-custom::before{display:none;}
+.tt-region{font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:6px;}
+.tt-section{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin:6px 0 3px;opacity:.5;}
+.tt-row{display:flex;justify-content:space-between;gap:16px;font-size:11px;margin:2px 0;}
+.tt-label{color:#9ca3af;} .tt-val{font-weight:600;}
+.tt-val.red{color:#f87171;} .tt-val.purple{color:#c084fc;} .tt-val.cyan{color:#67e8f9;} .tt-val.violet{color:#e879f9;} .tt-val.orange{color:#fb923c;}
 
 /* RESPONSIVE */
-@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:1100px){.kpi-row{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:860px){
   .main-grid{grid-template-columns:1fr;}
-  .kpi-row{grid-template-columns:repeat(3,1fr);}
+  .kpi-row{grid-template-columns:repeat(4,1fr);}
   #map{height:360px;}
   .top10-list{max-height:280px;}
 }
-@media(max-width:600px){
-  .header{padding:10px 14px;gap:10px;} .header-title h1{font-size:13px;} .header-badge{display:none;} .date-badge{display:none;}
+@media(max-width:640px){
+  .header{padding:10px 14px;gap:10px;} .header-title h1{font-size:13px;} .header-badge,.date-badge{display:none;}
   .kpi-row{grid-template-columns:repeat(2,1fr);gap:8px;padding:10px;}
   .kpi-value{font-size:20px;}
-  .section-label{padding:10px 12px 0;}
-  .main-grid{padding:10px 12px;} .table-panel{margin:0 12px 14px;}
+  .section-label{padding:10px 12px 0;} .legend-dots{display:none;}
+  .main-grid{padding:10px 12px;gap:10px;} .table-panel{margin:0 12px 14px;}
   #map{height:300px;}
-  .panel-header{padding:10px 12px;}
-  .metric-tabs{max-width:100%;} .metric-tab{padding:4px 8px;font-size:10px;}
+  .panel-header-tabs{gap:6px;} .metric-tab{font-size:10px;padding:4px 8px;}
+  .table-header{flex-wrap:wrap;} .search-box{width:auto;flex:1;}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="header-logo">PNJ</div>
   <div class="header-title">
@@ -156,61 +145,77 @@ tr:hover td { background:#fafafa; }
     <p>Phân tích hiệu quả truyền thông & kinh doanh theo tỉnh/thành phố</p>
   </div>
   <div class="header-right">
-    <div class="date-badge">17/05 – 18/05/2025</div>
+    <div class="date-badge">17/05 – 19/05/2025</div>
     <div class="header-badge">KBNH · MEDIA REPORT</div>
   </div>
 </div>
 
-<!-- KPI CARDS -->
+<!-- KPI CARDS — 2 rows × 4 cols -->
 <div class="section-label">
-  <h2>Tổng quan</h2><div class="section-divider"></div>
-  <span style="font-size:10px;color:#9ca3af;margin-left:8px;">
-    <span style="display:inline-block;width:8px;height:8px;background:#dbeafe;border:1px solid #93c5fd;border-radius:2px;margin-right:3px;"></span>Media
-    <span style="display:inline-block;width:8px;height:8px;background:#dcfce7;border:1px solid #86efac;border-radius:2px;margin:0 3px 0 8px;"></span>Thực tế
-  </span>
+  <h2>Tổng quan</h2>
+  <div class="section-divider"></div>
+  <div class="legend-dots">
+    <span class="ldot"><span class="ldot-sq" style="background:#dbeafe;border:1px solid #93c5fd;"></span>Media</span>
+    <span class="ldot"><span class="ldot-sq" style="background:#dcfce7;border:1px solid #86efac;"></span>Thực tế</span>
+    <span class="ldot"><span class="ldot-sq" style="background:#fdf4ff;border:1px solid #d8b4fe;"></span>KH Mới</span>
+    <span class="ldot"><span class="ldot-sq" style="background:#fff7ed;border:1px solid #fdba74;"></span>KH Cũ</span>
+  </div>
 </div>
 <div class="kpi-row">
-  <div class="kpi-card c1" id="kpi-impressions" onclick="setMetric('impressions')" title="Click để xem trên bản đồ">
+  <!-- Row 1: Media -->
+  <div class="kpi-card" style="--kc:#2d6ef6" id="kpi-impressions" onclick="setMetric('impressions')">
     <div class="kpi-label">Total Impressions</div>
     <div class="kpi-value" id="v-impressions">0</div>
     <div class="kpi-sub">Toàn quốc</div>
     <div class="kpi-tag tag-media">Media</div>
   </div>
-  <div class="kpi-card c2" id="kpi-clicks" onclick="setMetric('clicks')">
+  <div class="kpi-card" style="--kc:#16a34a" id="kpi-clicks" onclick="setMetric('clicks')">
     <div class="kpi-label">Total Clicks</div>
     <div class="kpi-value" id="v-clicks">0</div>
     <div class="kpi-sub">Toàn quốc</div>
     <div class="kpi-tag tag-media">Media</div>
   </div>
-  <div class="kpi-card c3" id="kpi-cr">
+  <div class="kpi-card" style="--kc:#d97706;cursor:default;">
     <div class="kpi-label">CTR Trung Bình</div>
-    <div class="kpi-value" id="v-cr">0</div>
+    <div class="kpi-value" id="v-ctr">0%</div>
     <div class="kpi-sub">Clicks / Impressions</div>
     <div class="kpi-tag tag-media">Media</div>
   </div>
-  <div class="kpi-card c4" id="kpi-revenue" onclick="setMetric('revenue')">
+  <div class="kpi-card" style="--kc:#e11d48" id="kpi-revenue" onclick="setMetric('revenue')">
     <div class="kpi-label">Doanh Thu</div>
     <div class="kpi-value" id="v-revenue">0</div>
-    <div class="kpi-sub">17/05 – 18/05</div>
+    <div class="kpi-sub">17/05 – 19/05</div>
     <div class="kpi-tag tag-actual">Thực tế</div>
   </div>
-  <div class="kpi-card c5" id="kpi-orders" onclick="setMetric('orders')">
+  <!-- Row 2: Actual -->
+  <div class="kpi-card" style="--kc:#7c3aed" id="kpi-orders" onclick="setMetric('orders')">
     <div class="kpi-label">SL Đơn Hàng</div>
     <div class="kpi-value" id="v-orders">0</div>
-    <div class="kpi-sub">17/05 – 18/05</div>
+    <div class="kpi-sub">17/05 – 19/05</div>
     <div class="kpi-tag tag-actual">Thực tế</div>
   </div>
-  <div class="kpi-card c6" id="kpi-kh_actual" onclick="setMetric('kh_actual')">
-    <div class="kpi-label">SL Khách Hàng</div>
-    <div class="kpi-value" id="v-kh_actual">0</div>
-    <div class="kpi-sub">17/05 – 18/05</div>
+  <div class="kpi-card" style="--kc:#0891b2" id="kpi-kh_total" onclick="setMetric('kh_total')">
+    <div class="kpi-label">Tổng KH</div>
+    <div class="kpi-value" id="v-kh_total">0</div>
+    <div class="kpi-sub">17/05 – 19/05</div>
     <div class="kpi-tag tag-actual">Thực tế</div>
+  </div>
+  <div class="kpi-card" style="--kc:#9333ea" id="kpi-khm" onclick="setMetric('khm')">
+    <div class="kpi-label">KH Mới (KHM)</div>
+    <div class="kpi-value" id="v-khm">0</div>
+    <div class="kpi-sub">17/05 – 19/05</div>
+    <div class="kpi-tag" style="background:#fdf4ff;color:#7e22ce;">KH Mới</div>
+  </div>
+  <div class="kpi-card" style="--kc:#ea580c" id="kpi-khc" onclick="setMetric('khc')">
+    <div class="kpi-label">KH Cũ (KHC)</div>
+    <div class="kpi-value" id="v-khc">0</div>
+    <div class="kpi-sub">17/05 – 19/05</div>
+    <div class="kpi-tag" style="background:#fff7ed;color:#c2410c;">KH Cũ</div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="main-grid">
-  <!-- MAP -->
   <div class="map-panel">
     <div class="panel-header">
       <div class="panel-header-top">
@@ -230,7 +235,9 @@ tr:hover td { background:#fafafa; }
           <div class="metric-tabs">
             <button class="metric-tab actual-tab" id="tab-revenue" onclick="setMetric('revenue')">Doanh Thu</button>
             <button class="metric-tab actual-tab" id="tab-orders" onclick="setMetric('orders')">Đơn Hàng</button>
-            <button class="metric-tab actual-tab" id="tab-kh_actual" onclick="setMetric('kh_actual')">KH Thực</button>
+            <button class="metric-tab actual-tab" id="tab-kh_total" onclick="setMetric('kh_total')">Tổng KH</button>
+            <button class="metric-tab actual-tab" id="tab-khm" onclick="setMetric('khm')" style="color:#9333ea">KH Mới</button>
+            <button class="metric-tab actual-tab" id="tab-khc" onclick="setMetric('khc')" style="color:#ea580c">KH Cũ</button>
           </div>
         </div>
       </div>
@@ -245,12 +252,11 @@ tr:hover td { background:#fafafa; }
     </div>
   </div>
 
-  <!-- TOP 10 -->
   <div class="right-panel">
     <div class="top10-panel">
-      <div class="panel-header">
+      <div class="panel-header" style="flex-direction:row;align-items:center;">
         <span class="panel-title">Top 10 tỉnh/thành</span>
-        <span style="font-size:10px;color:#9ca3af;" id="top10-label">Theo Impressions</span>
+        <span style="font-size:10px;color:#9ca3af;margin-left:auto;" id="top10-label">Theo Impressions</span>
       </div>
       <div class="top10-list" id="top10-list"></div>
     </div>
@@ -266,17 +272,17 @@ tr:hover td { background:#fafafa; }
   </div>
   <div class="tbl-scroll">
   <table>
-    <thead>
-      <tr>
-        <th onclick="sortTable('region')" id="th-region"># Tỉnh / Thành Phố <span class="si"></span></th>
-        <th class="th-media" onclick="sortTable('impressions')" id="th-impressions" style="text-align:right">Impressions <span class="si"></span></th>
-        <th class="th-media" onclick="sortTable('clicks')" id="th-clicks" style="text-align:right">Clicks <span class="si"></span></th>
-        <th class="th-media" onclick="sortTable('cr')" id="th-cr" style="text-align:right">CTR <span class="si"></span></th>
-        <th class="th-actual col-divider" onclick="sortTable('revenue')" id="th-revenue" style="text-align:right">Doanh Thu <span class="si"></span></th>
-        <th class="th-actual" onclick="sortTable('orders')" id="th-orders" style="text-align:right">SL Đơn <span class="si"></span></th>
-        <th class="th-actual sorted" onclick="sortTable('kh_actual')" id="th-kh_actual" style="text-align:right">SL Khách <span class="si">↓</span></th>
-      </tr>
-    </thead>
+    <thead><tr>
+      <th onclick="srt('region')" id="th-region"># Tỉnh / Thành Phố <span class="si"></span></th>
+      <th class="th-media" onclick="srt('impressions')" id="th-impressions" style="text-align:right">Impressions <span class="si"></span></th>
+      <th class="th-media" onclick="srt('clicks')" id="th-clicks" style="text-align:right">Clicks <span class="si"></span></th>
+      <th class="th-media" onclick="srt('cr')" id="th-cr" style="text-align:right">CTR <span class="si"></span></th>
+      <th class="th-actual col-divider" onclick="srt('revenue')" id="th-revenue" style="text-align:right">Doanh Thu <span class="si"></span></th>
+      <th class="th-actual" onclick="srt('orders')" id="th-orders" style="text-align:right">SL Đơn <span class="si"></span></th>
+      <th class="th-actual" onclick="srt('kh_total')" id="th-kh_total" style="text-align:right">Tổng KH <span class="si">↓</span></th>
+      <th class="th-khm col-divider" onclick="srt('khm')" id="th-khm" style="text-align:right">KH Mới <span class="si"></span></th>
+      <th class="th-khc" onclick="srt('khc')" id="th-khc" style="text-align:right">KH Cũ <span class="si"></span></th>
+    </tr></thead>
     <tbody id="table-body"></tbody>
   </table>
   </div>
@@ -287,343 +293,292 @@ tr:hover td { background:#fafafa; }
 </div>
 
 <script>
-// ── DATA ───────────────────────────────────────────────────────────
-// [region, lat, lng, impressions, clicks, cr, revenue(VND), orders, kh_actual]
-// Revenue thực từ báo cáo KBNH 17/05–18/05
+// ── DATA ─────────────────────────────────────────────────────────────
+// [region, lat, lng, impressions, clicks, revenue, orders, kh_total, khm, khc]
 const RAW=[
-  ["TP. Hồ Chí Minh",10.7769,106.7009,58621,1452,0.09,445000000,247,233],
-  ["Hà Nội",21.0285,105.8542,28643,685,0.09,70000000,39,36],
-  ["Bình Dương",10.9804,106.6519,4683,102,0.13,79000000,44,43],
-  ["Đà Nẵng",16.0544,108.2022,5560,96,0.08,0,0,0],
-  ["Cần Thơ",10.0452,105.7469,3201,68,0.10,49000000,27,25],
-  ["Hải Phòng",20.8449,106.6881,2685,59,0.12,0,0,0],
-  ["Đồng Nai",10.9453,106.824,3312,54,0.09,0,0,0],
-  ["Thừa Thiên Huế",16.4637,107.5909,1833,37,0.08,0,0,0],
-  ["Đắk Lắk",12.71,108.2378,1565,36,0.09,38000000,21,21],
-  ["Khánh Hòa",12.2388,109.1967,1744,33,0.12,0,0,0],
-  ["Nghệ An",18.6796,105.6813,1179,27,0.14,0,0,0],
-  ["Lâm Đồng",11.5753,108.1429,1009,26,0.14,0,0,0],
-  ["Bà Rịa - Vũng Tàu",10.5417,107.243,1589,23,0.14,0,0,0],
-  ["Bắc Ninh",21.1861,106.0763,1158,21,0.08,0,0,0],
-  ["Long An",10.6956,106.2431,1150,17,0.13,0,0,0],
-  ["Thanh Hóa",19.8074,105.7766,996,17,0.13,0,0,0],
-  ["Bình Thuận",10.9333,108.1,766,15,0.11,0,0,0],
-  ["Thái Bình",20.4463,106.3366,470,15,0.10,0,0,0],
-  ["Ninh Thuận",11.6739,108.8629,365,11,0.11,0,0,0],
-  ["Kon Tum",14.3545,108.0076,370,10,0.09,0,0,0],
-  ["Ninh Bình",20.2506,105.9745,513,9,0.08,0,0,0],
-  ["Quảng Bình",17.4689,106.6223,470,9,0.11,0,0,0],
-  ["Quảng Trị",16.7943,107.1878,235,6,0.09,0,0,0],
-  ["Quảng Nam",15.5394,108.0191,1132,5,0.10,0,0,0],
-  ["Hải Dương",20.9373,106.3145,55,4,0.13,0,0,0],
-  ["Đồng Tháp",10.4938,105.6882,528,3,0.09,0,0,0],
-  ["Hậu Giang",9.7845,105.4701,187,3,0.14,0,0,0],
-  ["Tây Ninh",11.335,106.1099,17,2,0.14,0,0,0],
-  ["Bình Định",13.782,109.2196,13,2,0.14,0,0,0],
-  ["Hà Nam",20.5835,105.923,313,1,0.11,0,0,0],
-  ["Vĩnh Long",10.2396,105.9572,108,1,0.08,0,0,0],
-  ["Quảng Ninh",21.0064,107.2925,56,1,0.11,0,0,0],
-  ["Kiên Giang",10.0125,105.0809,20,1,0.14,0,0,0],
-  ["Nam Định",20.4388,106.1621,18,1,0.13,0,0,0],
-  ["Hưng Yên",20.6464,106.0511,7,1,0.14,0,0,0],
-  ["An Giang",10.5216,105.1259,20,0,0.08,0,0,0],
-  ["Quảng Ngãi",15.1214,108.8044,19,0,0.08,0,0,0],
-  ["Tiền Giang",10.4493,106.3421,15,0,0.11,0,0,0],
-  ["Cà Mau",9.1527,105.1961,14,0,0.13,0,0,0],
-  ["Bến Tre",10.2433,106.3756,10,0,0.14,0,0,0],
-  ["Bình Phước",11.7512,106.7235,9,0,0.14,0,0,0],
-  ["Vĩnh Phúc",21.3089,105.6049,9,0,0.08,0,0,0],
-  ["Bạc Liêu",9.294,105.7244,8,0,0.10,0,0,0],
-  ["Gia Lai",13.9833,108.0,8,0,0.10,0,0,0],
-  ["Phú Thọ",21.2684,105.2046,6,0,0.14,0,0,0],
-  ["Thái Nguyên",21.5942,105.8482,6,0,0.12,0,0,0],
-  ["Sóc Trăng",9.6036,105.98,5,0,0.08,0,0,0],
-  ["Trà Vinh",9.8127,106.2993,5,0,0.13,0,0,0],
-  ["Bắc Giang",21.2731,106.1946,3,0,0.13,0,0,0],
-  ["Hà Giang",22.7662,104.9389,3,0,0.10,0,0,0],
-  ["Phú Yên",13.0882,109.0929,3,0,0.11,0,0,0],
-  ["Hòa Bình",20.8172,105.3376,2,0,0.08,0,0,0],
-  ["Lào Cai",22.4809,103.9755,2,0,0.13,0,0,0],
-  ["Yên Bái",21.7229,104.9113,2,0,0.08,0,0,0],
-  ["Đắk Nông",12.2646,107.6098,2,0,0.10,0,0,0],
-  ["Cao Bằng",22.6666,106.2639,1,0,0.09,0,0,0],
-  ["Hà Tĩnh",18.3559,105.8877,1,0,0.14,0,0,0],
-  ["Lạng Sơn",21.8526,106.7615,1,0,0.09,0,0,0],
-  ["Điện Biên",21.386,103.0169,1,0,0.10,0,0,0],
+  ["TP. Hồ Chí Minh",10.7769,106.7009,72216,1717,632654000,351,349,97,252],
+  ["Hà Nội",21.0285,105.8542,34495,777,127888000,71,71,37,34],
+  ["Bình Dương",10.9804,106.6519,5742,118,99126000,55,55,13,42],
+  ["Đà Nẵng",16.0544,108.2022,6679,115,39678000,22,22,3,19],
+  ["Cần Thơ",10.0452,105.7469,4002,80,59433000,33,33,10,23],
+  ["Hải Phòng",20.8449,106.6881,3303,69,14265000,8,8,4,4],
+  ["Đồng Nai",10.9453,106.824,4008,60,23448000,13,13,3,10],
+  ["Đắk Lắk",12.71,108.2378,1913,45,45080000,25,25,10,15],
+  ["Thừa Thiên Huế",16.4637,107.5909,2184,43,16059000,9,9,7,2],
+  ["Khánh Hòa",12.2388,109.1967,2120,35,9021000,5,5,2,3],
+  ["Nghệ An",18.6796,105.6813,1397,33,10818000,6,6,4,2],
+  ["Bà Rịa - Vũng Tàu",10.5417,107.243,1933,29,30663000,17,17,4,13],
+  ["Lâm Đồng",11.5753,108.1429,1247,27,14427000,8,8,2,6],
+  ["Bắc Ninh",21.1861,106.0763,1372,25,5412000,3,3,3,0],
+  ["Long An",10.6956,106.2431,1437,23,41313000,23,23,9,14],
+  ["Thanh Hóa",19.8074,105.7766,1214,19,9015000,5,5,3,2],
+  ["Bình Thuận",10.9333,108.1,919,16,10818000,6,6,2,4],
+  ["Thái Bình",20.4463,106.3366,554,16,9021000,5,5,2,3],
+  ["Ninh Bình",20.2506,105.9745,613,14,7212000,4,4,3,1],
+  ["Kon Tum",14.3545,108.0076,446,12,1806000,1,1,1,0],
+  ["Ninh Thuận",11.6739,108.8629,456,11,25248000,14,14,1,13],
+  ["Quảng Bình",17.4689,106.6223,549,10,0,0,0,0,0],
+  ["Đồng Tháp",10.4938,105.6882,655,7,10818000,6,6,1,5],
+  ["Quảng Trị",16.7943,107.1878,280,6,23277000,13,13,2,11],
+  ["Quảng Nam",15.5394,108.0191,1375,5,1803000,1,1,0,1],
+  ["Hậu Giang",9.7845,105.4701,233,4,10821000,6,6,0,6],
+  ["Hải Dương",20.9373,106.3145,55,4,0,0,0,0,0],
+  ["Hà Nam",20.5835,105.923,368,2,0,0,0,0,0],
+  ["Vĩnh Long",10.2396,105.9572,140,2,0,0,0,0,0],
+  ["Quảng Ngãi",15.1214,108.8044,19,2,0,0,0,0,0],
+  ["Tây Ninh",11.335,106.1099,17,2,1803000,1,1,0,1],
+  ["Bình Định",13.782,109.2196,13,2,0,0,0,0,0],
+  ["Quảng Ninh",21.0064,107.2925,56,1,0,0,0,0,0],
+  ["Nam Định",20.4388,106.1621,22,1,0,0,0,0,0],
+  ["Kiên Giang",10.0125,105.0809,20,1,9018000,5,5,3,2],
+  ["Hưng Yên",20.6464,106.0511,7,1,0,0,0,0,0],
+  ["An Giang",10.5216,105.1259,20,0,1803000,1,1,1,0],
+  ["Tiền Giang",10.4493,106.3421,15,0,9021000,5,5,1,4],
+  ["Cà Mau",9.1527,105.1961,14,0,0,0,0,0,0],
+  ["Bến Tre",10.2433,106.3756,10,0,0,0,0,0,0],
+  ["Bình Phước",11.7512,106.7235,9,0,1803000,1,1,0,1],
+  ["Vĩnh Phúc",21.3089,105.6049,9,0,0,0,0,0,0],
+  ["Bạc Liêu",9.294,105.7244,8,0,0,0,0,0,0],
+  ["Gia Lai",13.9833,108.0,8,0,0,0,0,0,0],
+  ["Phú Thọ",21.2684,105.2046,6,0,0,0,0,0,0],
+  ["Thái Nguyên",21.5942,105.8482,6,0,0,0,0,0,0],
+  ["Sóc Trăng",9.6036,105.98,5,0,0,0,0,0,0],
+  ["Trà Vinh",9.8127,106.2993,5,0,0,0,0,0,0],
+  ["Bắc Giang",21.2731,106.1946,3,0,0,0,0,0,0],
+  ["Hà Giang",22.7662,104.9389,3,0,0,0,0,0,0],
+  ["Phú Yên",13.0882,109.0929,3,0,0,0,0,0,0],
+  ["Hòa Bình",20.8172,105.3376,2,0,0,0,0,0,0],
+  ["Lào Cai",22.4809,103.9755,2,0,0,0,0,0,0],
+  ["Yên Bái",21.7229,104.9113,2,0,0,0,0,0,0],
+  ["Đắk Nông",12.2646,107.6098,2,0,0,0,0,0,0],
+  ["Cao Bằng",22.6666,106.2639,1,0,0,0,0,0,0],
+  ["Hà Tĩnh",18.3559,105.8877,1,0,0,0,0,0,0],
+  ["Lạng Sơn",21.8526,106.7615,1,0,0,0,0,0,0],
+  ["Điện Biên",21.386,103.0169,1,0,0,0,0,0,0],
 ];
 
 const data=RAW.map(r=>({
   region:r[0],lat:r[1],lng:r[2],
-  impressions:r[3],clicks:r[4],cr:r[5],
-  revenue:r[6],orders:r[7],kh_actual:r[8]
+  impressions:r[3],clicks:r[4],cr:r[3]>0?r[4]/r[3]:0,
+  revenue:r[5],orders:r[6],kh_total:r[7],khm:r[8],khc:r[9]
 }));
 
-// ── STATE ──────────────────────────────────────────────────────────
-let currentMetric='impressions';
-let sortCol='kh_actual', sortDir=-1;
-let currentPage=1;
-const PAGE_SIZE=15;
-let filteredData=[...data];
-let selectedRegion=null;
+// ── STATE ────────────────────────────────────────────────────────────
+let metric='impressions';
+let sortCol='kh_total', sortDir=-1;
+let page=1;
+const PAGE=15;
+let filtered=[...data];
+let sel=null;
 
 const MC={
-  impressions:{label:'Total Impressions',short:'Impressions',color:'#2d6ef6',isActual:false},
-  clicks:     {label:'Total Clicks',     short:'Clicks',      color:'#16a34a',isActual:false},
-  revenue:    {label:'Doanh Thu',        short:'Doanh Thu',   color:'#e11d48',isActual:true},
-  orders:     {label:'SL Đơn Hàng',     short:'Đơn Hàng',   color:'#7c3aed',isActual:true},
-  kh_actual:  {label:'SL Khách Hàng',   short:'KH Thực',    color:'#0891b2',isActual:true},
+  impressions:{label:'Total Impressions',short:'Impressions',color:'#2d6ef6'},
+  clicks:     {label:'Total Clicks',     short:'Clicks',     color:'#16a34a'},
+  revenue:    {label:'Doanh Thu',        short:'Doanh Thu',  color:'#e11d48'},
+  orders:     {label:'SL Đơn Hàng',     short:'Đơn Hàng',  color:'#7c3aed'},
+  kh_total:   {label:'Tổng KH',         short:'Tổng KH',   color:'#0891b2'},
+  khm:        {label:'KH Mới (KHM)',    short:'KH Mới',     color:'#9333ea'},
+  khc:        {label:'KH Cũ (KHC)',     short:'KH Cũ',      color:'#ea580c'},
 };
 
-// ── MAP ────────────────────────────────────────────────────────────
+// ── MAP ───────────────────────────────────────────────────────────────
 const isMobile=window.innerWidth<=600;
 const map=L.map('map',{
   center:isMobile?[16.5,107.5]:[16.2,107.8],
   zoom:isMobile?5:6,
   zoomControl:!isMobile,
-  attributionControl:false,
-  tap:true,
+  attributionControl:false,tap:true,
 });
-if(isMobile) L.control.zoom({position:'bottomright'}).addTo(map);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-  attribution:'© OpenStreetMap',opacity:0.45,
-}).addTo(map);
+if(isMobile)L.control.zoom({position:'bottomright'}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',opacity:0.45}).addTo(map);
 L.control.attribution({position:'bottomright'}).addTo(map);
 
 let markers=[];
-
-function mval(d,m){return d[m||currentMetric]||0;}
-
-function getBubbleR(val,mx){
-  if(mx===0||val===0)return 4;
-  const mn=isMobile?4:5, mxR=isMobile?24:38;
+function mv(d,m){return d[m||metric]||0;}
+function getBR(val,mx){
+  if(mx===0||val===0)return 0;
+  const mn=isMobile?4:5,mxR=isMobile?24:40;
   return mn+Math.sqrt(val/mx)*(mxR-mn);
 }
 
 function renderMap(){
-  markers.forEach(m=>map.removeLayer(m));
-  markers=[];
-  const mc=MC[currentMetric];
-  const mx=Math.max(...data.map(d=>mval(d)));
-
+  markers.forEach(m=>map.removeLayer(m));markers=[];
+  const mc=MC[metric];
+  const mx=Math.max(...data.map(d=>mv(d)));
   data.forEach(d=>{
-    const val=mval(d);
-    if(val===0) return; // Không hiện bubble nếu không có dữ liệu
-    const r=getBubbleR(val,mx);
-    const isSel=selectedRegion===d.region;
-    const hasSel=!!selectedRegion;
+    const val=mv(d);
+    if(val===0)return;
+    const r=getBR(val,mx);
+    const isSel=sel===d.region,hasSel=!!sel;
     const opacity=hasSel?(isSel?0.88:0.18):0.65;
-
     const circle=L.circleMarker([d.lat,d.lng],{
       radius:r,fillColor:mc.color,color:mc.color,
       weight:isSel?2.5:1.5,opacity:1,fillOpacity:opacity,
     });
-
-    const fmtRevenue=v=>v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(0)+'M':v>0?fmt(v):'—';
-
+    const fv=v=>v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(0)+'M':v>0?fmt(v):'—';
     circle.bindTooltip(`
       <div class="tt-region">${d.region}</div>
       <div class="tt-section">📊 Media</div>
       <div class="tt-row"><span class="tt-label">Impressions</span><span class="tt-val">${fmt(d.impressions)}</span></div>
       <div class="tt-row"><span class="tt-label">Clicks</span><span class="tt-val">${fmt(d.clicks)}</span></div>
-      <div class="tt-row"><span class="tt-label">CTR</span><span class="tt-val">${(d.cr*100).toFixed(0)}%</span></div>
-      <div class="tt-section">💰 Thực tế</div>
-      <div class="tt-row"><span class="tt-label">Doanh thu</span><span class="tt-val red">${fmtRevenue(d.revenue)}</span></div>
+      <div class="tt-row"><span class="tt-label">CTR</span><span class="tt-val">${(d.cr*100).toFixed(1)}%</span></div>
+      <div class="tt-section">💰 Kinh doanh</div>
+      <div class="tt-row"><span class="tt-label">Doanh thu</span><span class="tt-val red">${fv(d.revenue)}</span></div>
       <div class="tt-row"><span class="tt-label">SL Đơn</span><span class="tt-val purple">${d.orders||'—'}</span></div>
-      <div class="tt-row"><span class="tt-label">SL Khách</span><span class="tt-val cyan">${d.kh_actual||'—'}</span></div>
+      <div class="tt-row"><span class="tt-label">Tổng KH</span><span class="tt-val cyan">${d.kh_total||'—'}</span></div>
+      <div class="tt-row"><span class="tt-label">KH Mới</span><span class="tt-val violet">${d.khm||'—'}</span></div>
+      <div class="tt-row"><span class="tt-label">KH Cũ</span><span class="tt-val orange">${d.khc||'—'}</span></div>
     `,{className:'leaflet-tooltip-custom',permanent:false,direction:'top',offset:[0,-r]});
-
     circle.on('click',()=>{
-      selectedRegion=selectedRegion===d.region?null:d.region;
+      sel=sel===d.region?null:d.region;
       renderMap();renderTop10();filterTable();
     });
-    circle.addTo(map);
-    markers.push(circle);
+    circle.addTo(map);markers.push(circle);
   });
-
-  document.getElementById('legend-metric-name').textContent=MC[currentMetric].label;
-  document.querySelectorAll('.bubble-dot').forEach(b=>{b.style.background=`rgba(${hexToRgb(MC[currentMetric].color)},0.45)`;b.style.borderColor=MC[currentMetric].color;});
+  document.getElementById('legend-metric-name').textContent=MC[metric].label;
+  document.querySelectorAll('.bubble-dot').forEach(b=>{
+    const [rv,gv,bv]=MC[metric].color.match(/\w\w/g).map(x=>parseInt(x,16));
+    b.style.background=`rgba(${rv},${gv},${bv},.45)`;b.style.borderColor=MC[metric].color;
+  });
 }
 
-function hexToRgb(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`${r},${g},${b}`;}
-
-// ── KPI ────────────────────────────────────────────────────────────
+// ── KPI ───────────────────────────────────────────────────────────────
 function updateKPIs(){
   const sum=k=>data.reduce((a,d)=>a+(d[k]||0),0);
-  const totalImp=sum('impressions'), totalClk=sum('clicks');
-  document.getElementById('v-impressions').textContent=fmtK(totalImp);
-  document.getElementById('v-clicks').textContent=fmtK(totalClk);
-  document.getElementById('v-cr').textContent=(totalImp>0?(totalClk/totalImp*100).toFixed(2):'0')+'%';
+  const ti=sum('impressions'),tc=sum('clicks');
+  document.getElementById('v-impressions').textContent=fmtK(ti);
+  document.getElementById('v-clicks').textContent=fmtK(tc);
+  document.getElementById('v-ctr').textContent=ti>0?(tc/ti*100).toFixed(2)+'%':'0%';
   document.getElementById('v-revenue').textContent=fmtVND(sum('revenue'));
   document.getElementById('v-orders').textContent=fmt(sum('orders'));
-  document.getElementById('v-kh_actual').textContent=fmt(sum('kh_actual'));
+  document.getElementById('v-kh_total').textContent=fmt(sum('kh_total'));
+  document.getElementById('v-khm').textContent=fmt(sum('khm'));
+  document.getElementById('v-khc').textContent=fmt(sum('khc'));
 }
 
-// ── TOP 10 ─────────────────────────────────────────────────────────
+// ── TOP 10 ────────────────────────────────────────────────────────────
 function renderTop10(){
-  const mc=MC[currentMetric];
+  const mc=MC[metric];
   document.getElementById('top10-label').textContent='Theo '+mc.short;
-  const top=[...data].sort((a,b)=>mval(b)-mval(a)).slice(0,10);
-  const mx=mval(top[0]);
-  const el=document.getElementById('top10-list');
-  el.innerHTML='';
+  const top=[...data].sort((a,b)=>mv(b)-mv(a)).slice(0,10);
+  const mx=mv(top[0]);
+  const el=document.getElementById('top10-list');el.innerHTML='';
   top.forEach((d,i)=>{
-    const val=mval(d);
-    const pct=mx>0?(val/mx*100):0;
-    const rc=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-o';
-    const hl=selectedRegion===d.region?' highlight':'';
+    const val=mv(d);
+    const pct=mx>0?val/mx*100:0;
+    const rc=['rank-1','rank-2','rank-3'][i]||'rank-o';
     const div=document.createElement('div');
-    div.className='top10-item'+hl;
-    div.innerHTML=`
-      <div class="top10-rank ${rc}">${i+1}</div>
+    div.className='top10-item'+(sel===d.region?' highlight':'');
+    div.innerHTML=`<div class="top10-rank ${rc}">${i+1}</div>
       <div class="top10-name">${d.region}</div>
       <div class="top10-bar-wrap"><div class="top10-bar-bg"><div class="top10-bar-fill" style="width:${pct}%;background:${mc.color}"></div></div></div>
-      <div class="top10-val" style="color:${mc.color}">${currentMetric==='revenue'?fmtVND(val):fmt(val)}</div>`;
-    div.onclick=()=>{
-      selectedRegion=selectedRegion===d.region?null:d.region;
-      renderMap();renderTop10();filterTable();
-    };
+      <div class="top10-val" style="color:${mc.color}">${metric==='revenue'?fmtVND(val):fmt(val)}</div>`;
+    div.onclick=()=>{sel=sel===d.region?null:d.region;renderMap();renderTop10();filterTable();};
     el.appendChild(div);
   });
 }
 
-// ── TABLE ──────────────────────────────────────────────────────────
+// ── TABLE ─────────────────────────────────────────────────────────────
 function filterTable(){
   const q=document.getElementById('search-input').value.toLowerCase();
-  filteredData=data.filter(d=>d.region.toLowerCase().includes(q));
-  currentPage=1;renderTable();
+  filtered=data.filter(d=>d.region.toLowerCase().includes(q));
+  page=1;renderTable();
 }
 
-function sortTable(col){
-  if(sortCol===col) sortDir=-sortDir;
-  else { sortCol=col; sortDir=-1; }
-  // Reset tất cả headers
-  const cols=['region','impressions','clicks','cr','revenue','orders','kh_actual'];
-  cols.forEach(c=>{
-    const th=document.getElementById('th-'+c);
-    if(!th)return;
-    th.classList.remove('sorted');
-    th.querySelector('.si').textContent='';
-  });
-  // Highlight cột đang sort
-  const activeTh=document.getElementById('th-'+col);
-  if(activeTh){
-    activeTh.classList.add('sorted');
-    activeTh.querySelector('.si').textContent=sortDir===-1?'↓':'↑';
-  }
+function srt(col){
+  if(sortCol===col)sortDir=-sortDir;else{sortCol=col;sortDir=-1;}
+  const cols=['region','impressions','clicks','cr','revenue','orders','kh_total','khm','khc'];
+  cols.forEach(c=>{const t=document.getElementById('th-'+c);if(t){t.classList.remove('sorted');t.querySelector('.si').textContent='';}});
+  const at=document.getElementById('th-'+col);
+  if(at){at.classList.add('sorted');at.querySelector('.si').textContent=sortDir===-1?'↓':'↑';}
   renderTable();
 }
 
 function renderTable(){
-  const sorted=[...filteredData].sort((a,b)=>{
+  const sorted=[...filtered].sort((a,b)=>{
     const av=a[sortCol],bv=b[sortCol];
     if(typeof av==='string')return sortDir*av.localeCompare(bv,'vi');
     return sortDir*(av-bv);
   });
   const total=sorted.length;
-  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
-  currentPage=Math.min(currentPage,pages);
-  const start=(currentPage-1)*PAGE_SIZE;
-  const rows=sorted.slice(start,start+PAGE_SIZE);
-  const tbody=document.getElementById('table-body');
-  tbody.innerHTML='';
+  const pages=Math.max(1,Math.ceil(total/PAGE));
+  page=Math.min(page,pages);
+  const start=(page-1)*PAGE;
+  const rows=sorted.slice(start,start+PAGE);
+  const tbody=document.getElementById('table-body');tbody.innerHTML='';
+  const na='<span class="na">—</span>';
   rows.forEach((d,i)=>{
+    const has=d.revenue>0;
     const tr=document.createElement('tr');
-    const hasActual=d.revenue>0;
     tr.innerHTML=`
       <td><span style="color:#9ca3af;font-size:10px;margin-right:6px;">${start+i+1}</span><span class="td-region">${d.region}</span></td>
       <td class="td-num">${fmt(d.impressions)}</td>
       <td class="td-num">${fmt(d.clicks)}</td>
-      <td class="td-cr"><span class="cr-badge">${(d.cr*100).toFixed(0)}%</span></td>
-      <td class="td-revenue col-divider">${hasActual?fmtVND(d.revenue):'<span style="color:#d1d5db">—</span>'}</td>
-      <td class="td-orders">${d.orders||'<span style="color:#d1d5db">—</span>'}</td>
-      <td class="td-kh-actual">${d.kh_actual||'<span style="color:#d1d5db">—</span>'}</td>`;
+      <td style="text-align:right"><span class="cr-badge">${(d.cr*100).toFixed(0)}%</span></td>
+      <td class="td-revenue col-divider">${has?fmtVND(d.revenue):na}</td>
+      <td class="td-orders">${d.orders||na}</td>
+      <td class="td-kh">${d.kh_total||na}</td>
+      <td class="td-khm col-divider">${d.khm||na}</td>
+      <td class="td-khc">${d.khc||na}</td>`;
     tr.style.cursor='pointer';
-    if(selectedRegion===d.region)tr.style.background='#eff6ff';
-    if(hasActual)tr.style.fontWeight='500';
-    tr.onclick=()=>{
-      selectedRegion=selectedRegion===d.region?null:d.region;
-      map.setView([d.lat,d.lng],8,{animate:true});
-      renderMap();renderTop10();renderTable();
-    };
+    if(sel===d.region)tr.style.background='#eff6ff';
+    if(has)tr.style.fontWeight='500';
+    tr.onclick=()=>{sel=sel===d.region?null:d.region;map.setView([d.lat,d.lng],8,{animate:true});renderMap();renderTop10();renderTable();};
     tbody.appendChild(tr);
   });
-
-  document.getElementById('pagination-info').textContent=`Hiển thị ${start+1}–${Math.min(start+PAGE_SIZE,total)} / ${total} tỉnh thành`;
-  const pbts=document.getElementById('page-btns');
-  pbts.innerHTML='';
-  const addBtn=(lbl,pg,dis,act)=>{
-    const b=document.createElement('button');
-    b.className='page-btn'+(act?' active':'');b.textContent=lbl;b.disabled=dis;
-    b.onclick=()=>{currentPage=pg;renderTable();};
-    pbts.appendChild(b);
-  };
-  addBtn('←',currentPage-1,currentPage===1);
-  pageRange(currentPage,pages).forEach(p=>{
+  document.getElementById('pagination-info').textContent=`${start+1}–${Math.min(start+PAGE,total)} / ${total} tỉnh`;
+  const pbts=document.getElementById('page-btns');pbts.innerHTML='';
+  const addB=(l,p,dis,act)=>{const b=document.createElement('button');b.className='page-btn'+(act?' active':'');b.textContent=l;b.disabled=dis;b.onclick=()=>{page=p;renderTable();};pbts.appendChild(b);};
+  addB('←',page-1,page===1);
+  pRange(page,pages).forEach(p=>{
     if(p==='…'){const s=document.createElement('span');s.textContent='…';s.style='padding:0 3px;color:#9ca3af';pbts.appendChild(s);}
-    else addBtn(p,p,false,p===currentPage);
+    else addB(p,p,false,p===page);
   });
-  addBtn('→',currentPage+1,currentPage===pages);
+  addB('→',page+1,page===pages);
 }
+function pRange(c,t){if(t<=7)return Array.from({length:t},(_,i)=>i+1);const p=[1];if(c>3)p.push('…');for(let i=Math.max(2,c-1);i<=Math.min(t-1,c+1);i++)p.push(i);if(c<t-2)p.push('…');p.push(t);return p;}
 
-function pageRange(cur,tot){
-  if(tot<=7)return Array.from({length:tot},(_,i)=>i+1);
-  const p=[1];if(cur>3)p.push('…');
-  for(let i=Math.max(2,cur-1);i<=Math.min(tot-1,cur+1);i++)p.push(i);
-  if(cur<tot-2)p.push('…');p.push(tot);return p;
-}
-
-// ── METRIC SWITCH ──────────────────────────────────────────────────
+// ── METRIC SWITCH ─────────────────────────────────────────────────────
 function setMetric(m){
-  currentMetric=m;
+  metric=m;
   document.querySelectorAll('.metric-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+m).classList.add('active');
   document.querySelectorAll('.kpi-card').forEach(k=>k.classList.remove('active'));
-  const kpiEl=document.getElementById('kpi-'+m);
-  if(kpiEl)kpiEl.classList.add('active');
+  document.getElementById('kpi-'+m)?.classList.add('active');
   renderMap();renderTop10();
 }
 
-// ── RESET ──────────────────────────────────────────────────────────
+// ── RESET ─────────────────────────────────────────────────────────────
 function resetFilter(){
-  selectedRegion=null;
-  document.getElementById('search-input').value='';
-  filteredData=[...data];currentPage=1;
+  sel=null;document.getElementById('search-input').value='';
+  filtered=[...data];page=1;
   map.setView(isMobile?[16.5,107.5]:[16.2,107.8],isMobile?5:6,{animate:true});
   renderMap();renderTop10();renderTable();
 }
 
-// ── CSV ────────────────────────────────────────────────────────────
+// ── CSV ───────────────────────────────────────────────────────────────
 function downloadCSV(){
-  const hdr=['Tỉnh/Thành','Impressions','Clicks','CTR','Doanh Thu (VND)','SL Đơn Hàng','SL Khách Hàng'];
-  const rows=filteredData.map(d=>[d.region,d.impressions,d.clicks,(d.cr*100).toFixed(0)+'%',d.revenue,d.orders,d.kh_actual]);
+  const hdr=['Tỉnh/Thành','Impressions','Clicks','CTR','Doanh Thu (VND)','SL Đơn','Tổng KH','KH Mới','KH Cũ'];
+  const rows=filtered.map(d=>[d.region,d.impressions,d.clicks,(d.cr*100).toFixed(1)+'%',d.revenue,d.orders,d.kh_total,d.khm,d.khc]);
   const csv=[hdr,...rows].map(r=>r.join(',')).join('\n');
   const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='pnj_kbnh_media_data.csv';a.click();
+  const a=document.createElement('a');a.href=url;a.download='pnj_kbnh_17_19.csv';a.click();
   URL.revokeObjectURL(url);
 }
 
-// ── UTILS ──────────────────────────────────────────────────────────
-function fmt(n){return(n===undefined||n===null)?'—':Number(n).toLocaleString('vi-VN');}
-function fmtK(n){
-  if(n>=1e9)return(n/1e9).toFixed(2).replace('.00','')+'B';
-  if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'M';
-  if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'K';
-  return Number(n).toLocaleString('vi-VN');
-}
-function fmtVND(n){
-  if(!n)return'—';
-  if(n>=1e9)return(n/1e9).toFixed(1)+'B';
-  if(n>=1e6)return(n/1e6).toFixed(0)+'M';
-  return Number(n).toLocaleString('vi-VN');
-}
+// ── UTILS ─────────────────────────────────────────────────────────────
+function fmt(n){return(n==null||n===undefined)?'—':Number(n).toLocaleString('vi-VN');}
+function fmtK(n){if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(1).replace('.0','')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace('.0','')+'K';return Number(n).toLocaleString('vi-VN');}
+function fmtVND(n){if(!n)return'—';if(n>=1e9)return(n/1e9).toFixed(2).replace('.00','')+'B';if(n>=1e6)return(n/1e6).toFixed(0)+'M';return Number(n).toLocaleString('vi-VN');}
 
-// ── INIT ───────────────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────────────────
 updateKPIs();
 renderMap();
 renderTop10();
-filteredData=[...data];
+filtered=[...data];
+// Default sort: Tổng KH cao → thấp (gọi renderTable thẳng để tránh flip dir)
+document.getElementById('th-kh_total').classList.add('sorted');
 renderTable();
 </script>
 </body>
